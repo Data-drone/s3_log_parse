@@ -7,7 +7,7 @@ import java.net.URI
 import scala.collection.mutable.ListBuffer
 
 object CompressTable {
-    def main() {
+    def main(s3key: String, s3accesskey: String) {
 
         /*start session*/
         val spark = SparkSession
@@ -18,8 +18,8 @@ object CompressTable {
             .config("spark.executor.memory", "2g")
             .getOrCreate()
 
-        spark.sparkContext.hadoopConfiguration.set("fs.s3a.access.key", "<>")
-        spark.sparkContext.hadoopConfiguration.set("fs.s3a.secret.key", "<>")
+        spark.sparkContext.hadoopConfiguration.set("fs.s3a.access.key", s3key)
+        spark.sparkContext.hadoopConfiguration.set("fs.s3a.secret.key", s3accesskey)
 
 
         /* Get a file list to run quick exps */
