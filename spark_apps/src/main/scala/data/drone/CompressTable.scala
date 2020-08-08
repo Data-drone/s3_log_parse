@@ -1,3 +1,5 @@
+package data.drone
+
 /* Spark app to compress my parquet data down */
 import org.apache.spark.sql.SparkSession
 import java.net.URI
