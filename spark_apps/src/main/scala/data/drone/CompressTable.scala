@@ -9,7 +9,8 @@ import java.net.URI
 import scala.collection.mutable.ListBuffer
 
 object CompressTable {
-    def main() {
+
+    def main(args: Array[String]) {
 
         /*start session*/
         val spark = SparkSession
@@ -21,7 +22,7 @@ object CompressTable {
             .getOrCreate()
 
         /* Get a file list to run quick exps */
-        val rawS3Dir = "s3://blaws3logsorganised/RawParquet_test2"
+        val rawS3Dir = "s3a://blaws3logsorganised/RawParquet_test2"
         val fileSystem = FileSystem.get(URI.create(rawS3Dir), new Configuration())
         val itemlist = fileSystem.listFiles(new Path(rawS3Dir), true)
         // val subList = itemlist.slice(1,100000) <- not a list more a iter
