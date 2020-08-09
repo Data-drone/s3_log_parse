@@ -5,7 +5,6 @@ import org.apache.spark.sql.SparkSession
 import java.net.URI
 import org.apache.hadoop.fs.{FileSystem, Path, RemoteIterator, LocatedFileStatus}
 import org.apache.hadoop.conf.Configuration
-import java.net.URI
 import scala.collection.mutable.ListBuffer
 
 object CompressTable {
@@ -23,7 +22,8 @@ object CompressTable {
 
         /* Get a file list to run quick exps */
         val rawS3Dir = "s3a://blaws3logsorganised/RawParquet_test2"
-        val fileSystem = FileSystem.get(URI.create(rawS3Dir), new Configuration())
+        //val fileSystem = FileSystem.get(URI.create(rawS3Dir), new Configuration())
+        val fileSystem = FileSystem.get(URI.create(rawS3Dir), spark.sparkContext.hadoopConfiguration)
         val itemlist = fileSystem.listFiles(new Path(rawS3Dir), true)
         // val subList = itemlist.slice(1,100000) <- not a list more a iter
 
