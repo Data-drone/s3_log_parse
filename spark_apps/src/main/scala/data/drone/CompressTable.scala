@@ -12,6 +12,8 @@ object CompressTable {
 
     def main(args: Array[String]) {
 
+        //jceks file in cluster config not working yet
+        // manually setting in spark shell works
         /*start session*/
         val spark = SparkSession
             .builder()
