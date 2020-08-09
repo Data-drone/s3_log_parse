@@ -6,6 +6,7 @@ import java.net.URI
 import org.apache.hadoop.fs.{FileSystem, Path, RemoteIterator, LocatedFileStatus}
 import org.apache.hadoop.conf.Configuration
 import scala.collection.mutable.ListBuffer
+import org.apache.spark.sql.functions.{to_timestamp, year, month, dayofmonth}
 
 object CompressTable {
 
@@ -26,7 +27,6 @@ object CompressTable {
         val fileSystem = FileSystem.get(URI.create(rawS3Dir), spark.sparkContext.hadoopConfiguration)
         val itemlist = fileSystem.listFiles(new Path(rawS3Dir), true)
         // val subList = itemlist.slice(1,100000) <- not a list more a iter
-
 
         val limit = 10000
         var cnt = 1
@@ -49,15 +49,33 @@ object CompressTable {
         }
 
         val fileList = loopy(itemlist).toList
-
-        val destinationS3Dir = "s3a://blaws3logsorganised/repartitioned_dir"
-    
         val df = spark.read.parquet(fileList: _*)
 
+        // lets add in a timestamp column and partition with that
+        val RequestTimestamp = to_timestamp($"RequestDateTime", "dd/MMM/yyyy:HH:mm:ss Z")
+        val RequestYear = year(RequestTimestamp)
+        val RequestMonth = month(RequestTimestamp)
+        val RequestDay = dayofmonth(RequestTimestamp)
 
-        val repartitionDF = df.repartition(30)
+        // merge
+        val df2 = df
+            .withColumn("RequestTimestamp", RequestTimestamp)
+            .withColumn("RequestYear", RequestYear)
+            .withColumn("RequestMonth", RequestMonth)
+            .withColumn("RequestDay", RequestDay)
+            .orderBy(RequestTimestamp)
         
-        repartitionDF.write.parquet(destinationS3Dir)
+        //repartition by our date fields
+        val repartitionDF = df2
+            .repartition(RequestYear, RequestMonth, RequestDay)
+        
+        // outputdir
+        val destinationS3Dir = "s3a://blaws3logsorganised/repartitioned_dir"
+
+        repartitionDF
+            .write
+            .partitionBy("RequestYear", "RequestMonth", "RequestDay")
+            .parquet(destinationS3Dir)
 
         spark.stop()
 
