@@ -26,50 +26,56 @@ object RepackRaw {
             .getOrCreate()
 
         // need to have the slash at the end
-        val rawS3Data = "s3a://blaws3logs/"
+        // val rawS3Data = "s3a://blaws3logs/"
+        //val rawPath = args(0)
+        val rawByDate = "s3a://blaws3logsorganised/datesort/20-06-05/"
 
-        val fileSystem = FileSystem.get(URI.create(rawS3Data), spark.sparkContext.hadoopConfiguration)
-        val itemlist = fileSystem.listFiles(new Path(rawS3Data), true)
+        // val df = spark.read.text(rawPath+"/*") 
+        val df = spark.read.text(rawByDate+"/*")
+
+        val regex_pattern = "([^ ]*) ([^ ]*) \\[(.*?)\\] ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) \\\"([^ ]*) ([^ ]*) (- |[^ ]*)\\\" (-|[0-9]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) (\"[^\"]*\") ([^ ]*)(?: ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*))?.*$"
+
+        // Regex in scala is slightly different from the hiveserde
+        // might need to consider switching to hiveql and using the serde properly later
+        val df2 = df
+            .withColumn("BucketOwner", regexp_extract(df("value"), regex_pattern, 1))
+            .withColumn("Bucket", regexp_extract(df("value"), regex_pattern, 2))
+            .withColumn("RequestDateTime", regexp_extract(df("value"), regex_pattern, 3))
+            .withColumn("RemoteIP", regexp_extract(df("value"), regex_pattern, 4))
+            .withColumn("Requester", regexp_extract(df("value"), regex_pattern, 5))
+            .withColumn("Operation", regexp_extract(df("value"), regex_pattern, 6))
+            .withColumn("Key", regexp_extract(df("value"), regex_pattern, 7))
+            .withColumn("RequestURI_operation", regexp_extract(df("value"), regex_pattern, 8))
+            .withColumn("RequestURI_key", regexp_extract(df("value"), regex_pattern, 9))
+            .withColumn("RequestURI_httpProtoversion", regexp_extract(df("value"), regex_pattern, 11))
+            .withColumn("HTTPstatus", regexp_extract(df("value"), regex_pattern, 12))
+            .withColumn("ErrorCode", regexp_extract(df("value"), regex_pattern, 13))
+            .withColumn("BytesSent", regexp_extract(df("value"), regex_pattern, 14))
+            .withColumn("ObjectSize", regexp_extract(df("value"), regex_pattern, 15))
+            .withColumn("TotalTime", regexp_extract(df("value"), regex_pattern, 16))
+            .withColumn("TurnAroundTime", regexp_extract(df("value"), regex_pattern, 17))
+            .withColumn("Referrer", regexp_extract(df("value"), regex_pattern, 18))
+            .withColumn("UserAgent", regexp_extract(df("value"), regex_pattern, 19))
+            .withColumn("VersionId", regexp_extract(df("value"), regex_pattern, 20))
+            .withColumn("HostId", regexp_extract(df("value"), regex_pattern, 21))
+            .withColumn("SigV", regexp_extract(df("value"), regex_pattern, 22))
+            .withColumn("CipherSuite", regexp_extract(df("value"), regex_pattern, 23))
+            .withColumn("AuthType", regexp_extract(df("value"), regex_pattern, 24))
+            .withColumn("EndPoint", regexp_extract(df("value"), regex_pattern, 25))
+            .withColumn("TLSVersion", regexp_extract(df("value"), regex_pattern, 26))
+            .drop("value")
+
+        //val df = spark.read.text(read_filter)
+
+        val df3 = df2
+            .withColumn("RequestTimestamp", to_timestamp($"RequestDateTime", "dd/MMM/yyyy:HH:mm:ss Z"))
+            .withColumn("BytesSent", col("BytesSent").cast(IntegerType))
+            .withColumn("ObjectSize", col("ObjectSize").cast(IntegerType))
+            .withColumn("TotalTime", col("TotalTime").cast(IntegerType))
+            .withColumn("TurnAroundTime", col("TurnAroundTime").cast(IntegerType))
+            .orderBy("RequestTimestamp")
+
         
-        // need to match up to line 43
-        
-        val file_filter = "s3serveraccesslogging-alpha2-prod2020-06-05*"
-
-        val read_filter = rawS3Data + file_filter
-
-        val s3logSchema = StructType(Array(
-            StructField("BucketOwner", StringType, true),
-            StructField("Bucket", StringType, true),
-            StructField("RequestDateTime", StringType, true),
-            StructField("RemoteIP", StringType, true),
-            StructField("Requester", StringType, true),
-            StructField("RequestID", StringType, true),
-            StructField("Operation", StringType, true),
-            StructField("Key", StringType, true),
-            StructField("RequestURI_operation", StringType, true),
-            StructField("RequestURI_key", StringType, true),
-            StructField("RequestURI_httpProtoversion", StringType, true),
-            StructField("HTTPstatus", StringType, true),
-            StructField("ErrorCode", StringType, true),
-            StructField("BytesSent", StringType, true),
-            StructField("ObjectSize", StringType, true),
-            StructField("TotalTime", StringType, true),
-            StructField("TurnAroundTime", StringType, true),
-            StructField("Referrer", StringType, true),
-            StructField("UserAgent", StringType, true),
-            StructField("VersionId", StringType, true),
-            StructField("HostId", StringType, true),
-            StructField("SigV", StringType, true),
-            StructField("CipherSuite", StringType, true),
-            StructField("AuthType", StringType, true),
-            StructField("EndPoint", StringType, true),
-            StructField("TLSVersion", StringType, true)
-        ))
-
-
-        // yes this would work but we have too many files...
-        // need more RAM
-        val df = spark.read.text(read_filter)
 
         spark.stop()
 
