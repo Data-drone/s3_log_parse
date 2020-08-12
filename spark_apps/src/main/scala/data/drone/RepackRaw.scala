@@ -26,6 +26,8 @@ object RepackRaw {
             .config("spark.num.executors", "15")
             .config("spark.executor.memory", "3g")
             .getOrCreate()
+        
+        import spark.implicits._
 
         // need to have the slash at the end
         // val rawS3Data = "s3a://blaws3logs/"

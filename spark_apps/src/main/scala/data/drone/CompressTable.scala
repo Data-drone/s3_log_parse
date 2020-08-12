@@ -7,7 +7,6 @@ import org.apache.hadoop.fs.{FileSystem, Path, RemoteIterator, LocatedFileStatus
 import org.apache.hadoop.conf.Configuration
 import scala.collection.mutable.ListBuffer
 import org.apache.spark.sql.functions.{to_timestamp, year, month, dayofmonth}
-import spark.implicits._
 
 object CompressTable {
 
@@ -23,6 +22,8 @@ object CompressTable {
             .config("spark.num.executors", "10")
             .config("spark.executor.memory", "2g")
             .getOrCreate()
+        
+        import spark.implicits._
 
         /* Get a file list to run quick exps */
         val rawS3Dir = "s3a://blaws3logsorganised/RawParquet_test2"
