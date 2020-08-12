@@ -20,7 +20,7 @@ object RepackRaw {
         // manually setting in spark shell works
         val spark = SparkSession
             .builder()
-            .appName("CompressApp")
+            .appName("RepackApp")
             .config("spark.executor.cores", "2")
             .config("spark.num.executors", "15")
             .config("spark.executor.memory", "3g")
