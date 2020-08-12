@@ -72,7 +72,7 @@ object CompressTable {
 
         repartitionDF
             .write
-            .partitionBy("RequestYear", "RequestMonth", "RequestDay")
+            .partitionBy(col("RequestYear"), col("RequestMonth"), col("RequestDay"))
             .parquet(destinationS3Dir)
 
         spark.stop()
