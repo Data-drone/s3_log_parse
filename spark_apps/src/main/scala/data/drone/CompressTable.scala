@@ -6,7 +6,7 @@ import java.net.URI
 import org.apache.hadoop.fs.{FileSystem, Path, RemoteIterator, LocatedFileStatus}
 import org.apache.hadoop.conf.Configuration
 import scala.collection.mutable.ListBuffer
-import org.apache.spark.sql.functions.{to_timestamp, year, month, dayofmonth, col}
+import org.apache.spark.sql.functions.{to_timestamp, year, month, dayofmonth, col, hour, to_date}
 
 object CompressTable {
 
