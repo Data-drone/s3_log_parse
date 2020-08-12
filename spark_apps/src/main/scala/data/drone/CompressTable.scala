@@ -61,18 +61,18 @@ object CompressTable {
             .withColumn("RequestYear", year(col("RequestTimestamp")))
             .withColumn("RequestMonth", month(col("RequestTimestamp")))
             .withColumn("RequestDay", dayofmonth(col("RequestTimestamp")))
-            .orderBy("RequestTimestamp")
+            .orderBy(col("RequestTimestamp"))
 
         //repartition by our date fields
         val repartitionDF = df2
-            .repartition(RequestYear, RequestMonth, RequestDay)
+            .repartition(col("RequestYear"), col("RequestMonth"), col("RequestDay"))
         
         // outputdir
         val destinationS3Dir = "s3a://blaws3logsorganised/repartitioned_dir"
 
         repartitionDF
             .write
-            .partitionBy(RequestYear, RequestMonth, RequestDay)
+            .partitionBy(col("RequestYear"), col("RequestMonth"), col("RequestDay"))
             .parquet(destinationS3Dir)
 
         spark.stop()
