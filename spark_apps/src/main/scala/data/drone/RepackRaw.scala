@@ -88,7 +88,7 @@ object RepackRaw {
 
         // group by hr and save
         val write_path = "s3a://blaws3logsorganised/dateparquet/test1/"
-        df3.write.partitionBy(col("RequestDate"), col("RequestHour")).parquet(write_path)
+        df3.write.partitionBy(RequestDate, RequestHour).parquet(write_path)
 
         spark.stop()
 
