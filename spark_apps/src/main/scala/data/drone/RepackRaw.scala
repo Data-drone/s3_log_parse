@@ -21,13 +21,14 @@ object RepackRaw {
             .builder()
             .appName("CompressApp")
             .config("spark.executor.cores", "2")
-            .config("spark.num.executors", "10")
-            .config("spark.executor.memory", "2g")
+            .config("spark.num.executors", "15")
+            .config("spark.executor.memory", "3g")
             .getOrCreate()
 
         // need to have the slash at the end
         // val rawS3Data = "s3a://blaws3logs/"
         //val rawPath = args(0)
+        // val rawTest = "s3a://blaws3logsorganised/datesort/20-06-05/s3serveraccesslogging-alpha2-prod2020-06-05-09*" 
         val rawByDate = "s3a://blaws3logsorganised/datesort/20-06-05/"
 
         // val df = spark.read.text(rawPath+"/*") 
@@ -73,9 +74,17 @@ object RepackRaw {
             .withColumn("ObjectSize", col("ObjectSize").cast(IntegerType))
             .withColumn("TotalTime", col("TotalTime").cast(IntegerType))
             .withColumn("TurnAroundTime", col("TurnAroundTime").cast(IntegerType))
+            .withColumn("RequestDate", to_date(col("RequestTimestamp")))
+            .withColumn("RequestHour", hour(col("RequestTimestamp")))
             .orderBy("RequestTimestamp")
 
-        
+        // test code
+        // df3.createOrReplaceTempView("first_day")
+        // 
+
+        // group by hr and save
+        val write_path = "s3a://blaws3logsorganised/dateparquet/test1/"
+        df3.write.partitionBy("RequestDate", "RequestHour").parquet(write_path)
 
         spark.stop()
 
