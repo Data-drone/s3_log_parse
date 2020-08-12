@@ -61,7 +61,7 @@ object CompressTable {
             .withColumn("RequestYear", year(col("RequestTimestamp")))
             .withColumn("RequestMonth", month(col("RequestTimestamp")))
             .withColumn("RequestDay", dayofmonth(col("RequestTimestamp")))
-            .orderBy(RequestTimestamp)
+            .orderBy("RequestTimestamp")
 
         //repartition by our date fields
         val repartitionDF = df2
