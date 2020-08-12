@@ -54,19 +54,13 @@ object CompressTable {
         val df = spark.read.parquet(fileList: _*)
 
         // lets add in a timestamp column and partition with that
-        val RequestTimestamp = to_timestamp($"RequestDateTime", "dd/MMM/yyyy:HH:mm:ss Z")
-        val RequestYear = year(RequestTimestamp)
-        val RequestMonth = month(RequestTimestamp)
-        val RequestDay = dayofmonth(RequestTimestamp)
-
-        // merge
         val df2 = df
-            .withColumn("RequestTimestamp", RequestTimestamp)
-            .withColumn("RequestYear", RequestYear)
-            .withColumn("RequestMonth", RequestMonth)
-            .withColumn("RequestDay", RequestDay)
+            .withColumn("RequestTimestamp", to_timestamp($"RequestDateTime", "dd/MMM/yyyy:HH:mm:ss Z"))
+            .withColumn("RequestYear", year(col("RequestTimestamp")))
+            .withColumn("RequestMonth", month(col("RequestTimestamp")))
+            .withColumn("RequestDay", dayofmonth(col("RequestTimestamp")))
             .orderBy(RequestTimestamp)
-        
+
         //repartition by our date fields
         val repartitionDF = df2
             .repartition(RequestYear, RequestMonth, RequestDay)

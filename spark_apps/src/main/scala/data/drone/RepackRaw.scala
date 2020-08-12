@@ -10,6 +10,7 @@ import org.apache.hadoop.conf.Configuration
 import scala.collection.mutable.ListBuffer
 import org.apache.spark.sql.functions.{to_timestamp, year, month, dayofmonth}
 import org.apache.spark.sql.types._
+import org.apache.spark.sql.functions.regexp_extract
 
 object RepackRaw {
 
