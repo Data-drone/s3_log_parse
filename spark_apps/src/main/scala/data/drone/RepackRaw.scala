@@ -25,6 +25,7 @@ object RepackRaw {
             .config("spark.executor.cores", "2")
             .config("spark.num.executors", "35")
             .config("spark.executor.memory", "4g")
+            .config("spark.yarn.submit.waitAppCompletion", "false")
             .getOrCreate()
         
         import spark.implicits._
