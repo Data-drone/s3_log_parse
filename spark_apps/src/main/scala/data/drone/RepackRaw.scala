@@ -33,7 +33,7 @@ object RepackRaw {
         // val rawS3Data = "s3a://blaws3logs/"
         //val rawPath = args(0)
         // val rawTest = "s3a://blaws3logsorganised/datesort/20-06-05/s3serveraccesslogging-alpha2-prod2020-06-05-09*" 
-        val rawByDate = "s3a://blaws3logsorganised/datesort/20-06-0*/"
+        val rawByDate = "s3a://blaws3logsorganised/datesort/20-06-0*"
 
         // val df = spark.read.text(rawPath+"/*") 
         val df = spark.read.text(rawByDate+"/*")
