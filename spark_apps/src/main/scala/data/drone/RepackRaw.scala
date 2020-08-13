@@ -22,8 +22,8 @@ object RepackRaw {
             .builder()
             .appName("RepackApp")
             .config("spark.executor.cores", "2")
-            .config("spark.num.executors", "15")
-            .config("spark.executor.memory", "3g")
+            .config("spark.num.executors", "35")
+            .config("spark.executor.memory", "4g")
             .getOrCreate()
         
         import spark.implicits._
