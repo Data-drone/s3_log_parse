@@ -10,6 +10,7 @@ import org.apache.hadoop.conf.Configuration
 import scala.collection.mutable.ListBuffer
 import org.apache.spark.sql.functions.{to_timestamp, year, month, dayofmonth, col, hour, to_date, regexp_extract, split}
 import org.apache.spark.sql.types._
+import org.apache.spark.sql.SaveMode
 
 
 object RepackRaw {
@@ -104,7 +105,7 @@ object RepackRaw {
 
         // group by hr and save
         val write_path = "s3a://blaws3logsorganised/dateparquet/test1/"
-        df3.write.partitionBy("RequestDate", "RequestHour").parquet(write_path)
+        df3.write.mode(SaveMode.Overwrite).partitionBy("RequestDate", "RequestHour").parquet(write_path)
 
         spark.stop()
 
