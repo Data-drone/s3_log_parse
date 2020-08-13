@@ -25,7 +25,6 @@ object RepackRaw {
             .config("spark.executor.cores", "2")
             .config("spark.num.executors", "35")
             .config("spark.executor.memory", "4g")
-            .config("spark.yarn.submit.waitAppCompletion", "false")
             .getOrCreate()
         
         import spark.implicits._
@@ -34,7 +33,7 @@ object RepackRaw {
         // val rawS3Data = "s3a://blaws3logs/"
         //val rawPath = args(0)
         // val rawTest = "s3a://blaws3logsorganised/datesort/20-06-05/s3serveraccesslogging-alpha2-prod2020-06-05-09*" 
-        val rawByDate = "s3a://blaws3logsorganised/datesort/20-06-05/"
+        val rawByDate = "s3a://blaws3logsorganised/datesort/20-06-0*/"
 
         // val df = spark.read.text(rawPath+"/*") 
         val df = spark.read.text(rawByDate+"/*")
@@ -46,7 +45,7 @@ object RepackRaw {
         // val regex_pattern = "^([^\s]+) ([^\s]+) \[.*?\] ([^\s]+) ([^\s]+) ([^\s]+) ([^\s]+) ([^\s]+) (".*?"|-) (-|[0-9]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) (".*?"|-) (".*?"|-) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^\s]+)"
         // val fix_s3 = "^([^\s]+) ([^\s]+) \[.*?\] ([^\s]+) ([^\s]+) ([^\s]+) ([^\s]+) ([^\s]+) (".*?"|-) (-|[0-9]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) (".*?"|-) (".*?"|-|[^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^\s]+|-,)"
 
-        val regex_pattern = "^([^\\s]+) ([^\\s]+) \\[.*?\\] ([^\\s]+) ([^\\s]+) ([^\\s]+) ([^\\s]+) ([^\\s]+) (\".*?\"|-) (-|[0-9]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) (\".*?\"|-) (\".*?\"|-|[^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^\\s]+|-,)"
+        val regex_pattern = "^([^\\s]+) ([^\\s]+) \\[(.*?)\\] ([^\\s]+) ([^\\s]+) ([^\\s]+) ([^\\s]+) ([^\\s]+) (\".*?\"|-) (-|[0-9]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) (\".*?\"|-) (\".*?\"|-|[^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^\\s]+|-,)"
         // val regex_pattern_f = "^([^\\s]+) ([^\\s]+) \\[.*?\\] ([^\\s]+) ([^\\s]+) ([^\\s]+) ([^\\s]+) ([^\\s]+) (\".*?\"|-) (-|[0-9]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) (\".*?\"|-) (\".*?\"|-) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^\\s]+)"
         // Regex in scala is slightly different from the hiveserde
         // might need to consider switching to hiveql and using the serde properly later
@@ -60,30 +59,30 @@ object RepackRaw {
             .withColumn("RequestDateTime", regexp_extract(df("value"), regex_pattern, 3))
             .withColumn("RemoteIP", regexp_extract(df("value"), regex_pattern, 4))
             .withColumn("Requester", regexp_extract(df("value"), regex_pattern, 5))
-            .withColumn("Operation", regexp_extract(df("value"), regex_pattern, 6))
-            .withColumn("Key", regexp_extract(df("value"), regex_pattern, 7))
-            .withColumn("Request", regexp_extract(df("value"), regex_pattern, 8))
-            //.withColumn("RequestURI_operation", regexp_extract(df("value"), regex_pattern, 8))
-            //.withColumn("RequestURI_key", regexp_extract(df("value"), regex_pattern, 9))
-            //.withColumn("RequestURI_httpProtoversion", regexp_extract(df("value"), regex_pattern, 11))
-            .withColumn("HTTPstatus", regexp_extract(df("value"), regex_pattern, 9))
-            .withColumn("ErrorCode", regexp_extract(df("value"), regex_pattern, 10))
-            .withColumn("BytesSent", regexp_extract(df("value"), regex_pattern, 11))
-            .withColumn("ObjectSize", regexp_extract(df("value"), regex_pattern, 12))
-            .withColumn("TotalTime", regexp_extract(df("value"), regex_pattern, 13))
-            .withColumn("TurnAroundTime", regexp_extract(df("value"), regex_pattern, 14))
-            .withColumn("Referrer", regexp_extract(df("value"), regex_pattern, 15))
-            .withColumn("UserAgent", regexp_extract(df("value"), regex_pattern, 16))
-            .withColumn("VersionId", regexp_extract(df("value"), regex_pattern, 17))
-            .withColumn("HostId", regexp_extract(df("value"), regex_pattern, 18))
-            .withColumn("SigV", regexp_extract(df("value"), regex_pattern, 19))
-            .withColumn("CipherSuite", regexp_extract(df("value"), regex_pattern, 20))
-            .withColumn("AuthType", regexp_extract(df("value"), regex_pattern, 21))
-            .withColumn("EndPoint", regexp_extract(df("value"), regex_pattern, 22))
-            .withColumn("TLSVersion", regexp_extract(df("value"), regex_pattern, 23))
+            .withColumn("RequestID", regexp_extract(df("value"), regex_pattern, 6))
+            .withColumn("Operation", regexp_extract(df("value"), regex_pattern, 7))
+            .withColumn("Key", regexp_extract(df("value"), regex_pattern, 8))
+            .withColumn("Request", regexp_extract(df("value"), regex_pattern, 9))
+            .withColumn("HTTPstatus", regexp_extract(df("value"), regex_pattern, 10))
+            .withColumn("ErrorCode", regexp_extract(df("value"), regex_pattern, 11))
+            .withColumn("BytesSent", regexp_extract(df("value"), regex_pattern, 12))
+            .withColumn("ObjectSize", regexp_extract(df("value"), regex_pattern, 13))
+            .withColumn("TotalTime", regexp_extract(df("value"), regex_pattern, 14))
+            .withColumn("TurnAroundTime", regexp_extract(df("value"), regex_pattern, 15))
+            .withColumn("Referrer", regexp_extract(df("value"), regex_pattern, 16))
+            .withColumn("UserAgent", regexp_extract(df("value"), regex_pattern, 17))
+            .withColumn("VersionId", regexp_extract(df("value"), regex_pattern, 18))
+            .withColumn("HostId", regexp_extract(df("value"), regex_pattern, 19))
+            .withColumn("SigV", regexp_extract(df("value"), regex_pattern, 20))
+            .withColumn("CipherSuite", regexp_extract(df("value"), regex_pattern, 21))
+            .withColumn("AuthType", regexp_extract(df("value"), regex_pattern, 22))
+            .withColumn("EndPoint", regexp_extract(df("value"), regex_pattern, 23))
+            .withColumn("TLSVersion", regexp_extract(df("value"), regex_pattern, 24))
             .drop("value")
 
-        //val df = spark.read.text(read_filter)
+        // quick check
+        //df2.filter( (df2("RequestDateTime") === null) || ( df2("RequestDateTime") === ""  )  ).count()
+
 
         val df3 = df2
             .withColumn("_tmp", split($"Request", " "))
@@ -101,11 +100,12 @@ object RepackRaw {
             .orderBy(col("RequestTimestamp"))
 
         // test code
+        // df3.filter( (df3("RequestDateTime") === null) || ( df3("RequestDateTime") === ""  )  ).count()
         // df3.createOrReplaceTempView("first_day")
         // 
 
         // group by hr and save
-        val write_path = "s3a://blaws3logsorganised/dateparquet/test1/"
+        val write_path = "s3a://blaws3logsorganised/dateparquet/test2/"
         df3.write.mode(SaveMode.Overwrite).partitionBy("RequestDate", "RequestHour").parquet(write_path)
 
         spark.stop()
