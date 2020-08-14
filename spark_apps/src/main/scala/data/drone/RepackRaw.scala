@@ -31,12 +31,12 @@ object RepackRaw {
 
         // need to have the slash at the end
         // val rawS3Data = "s3a://blaws3logs/"
-        //val rawPath = args(0)
+        val rawPath = args(0)
         // val rawTest = "s3a://blaws3logsorganised/datesort/20-06-05/s3serveraccesslogging-alpha2-prod2020-06-05-09*" 
-        val rawByDate = "s3a://blaws3logsorganised/datesort/20-06-0*"
+        // val rawByDate = "s3a://blaws3logsorganised/datesort/20-06-0*"
 
         // val df = spark.read.text(rawPath+"/*") 
-        val df = spark.read.text(rawByDate+"/*")
+        val df = spark.read.text(rawPath)
 
         //val regex_pattern = "([^ ]*) ([^ ]*) \\[(.*?)\\] ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) \\\"([^ ]*) ([^ ]*) (- |[^ ]*)\\\" (-|[0-9]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) (\"[^\"]*\") ([^ ]*)(?: ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*))?.*$"
         //val regex_pattern_2 = "^([^\\s]+) ([^\\s]+) \\[.*?\\] ([^\\s]+) ([^\\s]+) ([^\\s]+) ([^\\s]+) ([^\\s]+) ([^\\s]+) ([^\\s]+) ([^\\s]+) ([^\\s]+) ([^\\s]+) ([^\\s]+) ([^\\s]+) ([^\\s]+) ([^\\s]+) \".*?\" \".*?\" ([^\\s]+) ([^\\s]+) ([^\\s]+) ([^\\s]+) ([^\\s]+) ([^\\s]+) ([^\\s]+)".r
@@ -97,7 +97,8 @@ object RepackRaw {
             .withColumn("RequestDate", to_date(col("RequestTimestamp")))
             .withColumn("RequestHour", hour(col("RequestTimestamp")))
             .drop("_tmp")
-            .orderBy(col("RequestTimestamp"))
+            //.orderBy(col("RequestTimestamp"))
+            // I think order is a really expensive operation
 
         // test code
         // df3.filter( (df3("RequestDateTime") === null) || ( df3("RequestDateTime") === ""  )  ).count()
@@ -105,8 +106,9 @@ object RepackRaw {
         // 
 
         // group by hr and save
-        val write_path = "s3a://blaws3logsorganised/dateparquet/test2/"
-        df3.write.mode(SaveMode.Overwrite).partitionBy("RequestDate", "RequestHour").parquet(write_path)
+        val write_path = args(1)
+        // val write_path = "s3a://blaws3logsorganised/dateparquet/test2/"
+        df3.write.mode(SaveMode.Append).partitionBy("RequestDate", "RequestHour").parquet(write_path)
 
         spark.stop()
 
