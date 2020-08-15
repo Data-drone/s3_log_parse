@@ -24,7 +24,7 @@ object RepackRaw {
             .appName("RepackApp")
             .config("spark.executor.cores", "1")
             .config("spark.num.executors", "70")
-            .config("spark.executor.memory", "4g")
+            .config("spark.executor.memory", "3g")
             .getOrCreate()
         
         import spark.implicits._
@@ -111,7 +111,7 @@ object RepackRaw {
         df3
             .repartition(col("requestdate"))
             .write
-            .option("maxRecordsPerFile", 1000000)
+            .option("maxRecordsPerFile", 2000000)
             .mode(SaveMode.Overwrite)
             .partitionBy("requestdate", "requesthour")
             .parquet(write_path)
