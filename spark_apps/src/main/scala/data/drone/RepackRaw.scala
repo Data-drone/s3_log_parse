@@ -29,8 +29,6 @@ object RepackRaw {
             .config("spark.executor.memory", "3g")
             .getOrCreate()
         
-        import spark.implicits._
-
         // need to have the slash at the end
         // val rawS3Data = "s3a://blaws3logs/"
         // val rawTest = "s3a://blaws3logsorganised/datesort/20-06-05/s3serveraccesslogging-alpha2-prod2020-06-05-09*" 
@@ -77,6 +75,8 @@ object RepackRaw {
     def transform(readText: String, writeParquet: String, spark: SparkSession): Unit = {
 
             val df = spark.read.text(readText)
+
+            import spark.implicits._
 
             val regex_pattern = "^([^\\s]+) ([^\\s]+) \\[(.*?)\\] ([^\\s]+) ([^\\s]+) ([^\\s]+) ([^\\s]+) ([^\\s]+) (\".*?\"|-) (-|[0-9]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) (\".*?\"|-) (\".*?\"|-|[^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^\\s]+|-,)"
         
