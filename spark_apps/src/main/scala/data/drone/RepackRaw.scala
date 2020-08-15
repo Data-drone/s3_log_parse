@@ -57,7 +57,7 @@ object RepackRaw {
             val reformatDate = startDateFormat.toString(formatter)
             val readDir = readPath + reformatDate
 
-            transform(readDir, writePath)
+            transform(readDir, writePath, spark)
         } else {
 
             val daysCount = Days.daysBetween(startDateFormat, endDateFormat).getDays()
