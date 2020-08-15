@@ -39,14 +39,14 @@ object RepackRaw {
         // val df = spark.read.text(rawPath+"/*")
 
         // add code changes to step through days instead of processing ta once?
-        process(args(0), args(1), args(2), args(3))
+        process(args(0), args(1), args(2), args(3), spark)
         
         spark.stop()
 
     }
 
     def process(readPath: String, writePath: String, 
-                    startDate: String, endDate: String): Unit = {
+                    startDate: String, endDate: String, spark: SparkSession): Unit = {
 
         // date format = yyyy-mm-dd
         val startDateFormat = DateTime.parse(startDate)
@@ -67,14 +67,14 @@ object RepackRaw {
                 val x = startDateFormat.plusDays(i)
                 val reformatDate = x.toString(formatter)
                 val readDir = readPath + reformatDate
-                transform(readDir, writePath)
+                transform(readDir, writePath, spark)
             }
 
         }
 
     }
 
-    def transform(readText: String, writeParquet: String): Unit = {
+    def transform(readText: String, writeParquet: String, spark: SparkSession): Unit = {
 
             val df = spark.read.text(readText)
 
