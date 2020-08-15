@@ -25,7 +25,9 @@ spark-submit \
     --conf spark.hadoop.hadoop.security.credential.provider.path="jceks://hdfs/user/admin/awskeyfile.jceks" \
     target/scala-2.11/test-repack_2.11-1.0-SNAPSHOT.jar \
     "s3a://blaws3logsorganised/datesort/20-06-*/*" \
-    "s3a://blaws3logsorganised/dateparquet/test3/"
+    "s3a://blaws3logsorganised/dateparquet/test3/" \
+    "2020-07-01" \
+    "2020-07-03"
 
 ```
 

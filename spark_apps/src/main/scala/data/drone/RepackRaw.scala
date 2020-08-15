@@ -24,9 +24,9 @@ object RepackRaw {
         val spark = SparkSession
             .builder()
             .appName("RepackApp")
-            .config("spark.executor.cores", "1")
-            .config("spark.num.executors", "70")
-            .config("spark.executor.memory", "3g")
+            .config("spark.executor.cores", "5")
+            .config("spark.num.executors", "21")
+            .config("spark.executor.memory", "18g")
             .getOrCreate()
         
         // need to have the slash at the end
