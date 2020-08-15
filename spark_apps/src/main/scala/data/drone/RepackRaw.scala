@@ -55,7 +55,7 @@ object RepackRaw {
 
         val df2 = df
             .withColumn("bucketowner", regexp_extract(df("value"), regex_pattern, 1))
-            .withColumn("vucket", regexp_extract(df("value"), regex_pattern, 2))
+            .withColumn("bucket", regexp_extract(df("value"), regex_pattern, 2))
             .withColumn("requestdatetime", regexp_extract(df("value"), regex_pattern, 3))
             .withColumn("remoteip", regexp_extract(df("value"), regex_pattern, 4))
             .withColumn("requester", regexp_extract(df("value"), regex_pattern, 5))
@@ -85,7 +85,7 @@ object RepackRaw {
 
 
         val df3 = df2
-            .withColumn("_tmp", split($"Request", " "))
+            .withColumn("_tmp", split($"request", " "))
             .withColumn("requesturi_operation", $"_tmp".getItem(0))
             .withColumn("requesturi_key", $"_tmp".getItem(1))
             .withColumn("requesturi_httpprotoversion", $"_tmp".getItem(2))
@@ -109,11 +109,11 @@ object RepackRaw {
         val write_path = args(1)
         // val write_path = "s3a://blaws3logsorganised/dateparquet/test2/"
         df3
-            .repartition(col("requestDate"))
+            .repartition(col("requestdate"))
             .write
             .option("maxRecordsPerFile", 1000000)
             .mode(SaveMode.Overwrite)
-            .partitionBy("requestDate", "requesthour")
+            .partitionBy("requestdate", "requesthour")
             .parquet(write_path)
 
         spark.stop()
