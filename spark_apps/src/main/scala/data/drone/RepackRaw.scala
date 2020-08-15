@@ -62,7 +62,7 @@ object RepackRaw {
             .withColumn("requestid", regexp_extract(df("value"), regex_pattern, 6))
             .withColumn("operation", regexp_extract(df("value"), regex_pattern, 7))
             .withColumn("key", regexp_extract(df("value"), regex_pattern, 8))
-            .withColumn("eequest", regexp_extract(df("value"), regex_pattern, 9))
+            .withColumn("request", regexp_extract(df("value"), regex_pattern, 9))
             .withColumn("httpstatus", regexp_extract(df("value"), regex_pattern, 10))
             .withColumn("errorcode", regexp_extract(df("value"), regex_pattern, 11))
             .withColumn("bytessent", regexp_extract(df("value"), regex_pattern, 12))
