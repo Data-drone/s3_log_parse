@@ -112,7 +112,7 @@ object RepackRaw {
             .repartition(col("requestdate"))
             .write
             .option("maxRecordsPerFile", 2000000)
-            .mode(SaveMode.Overwrite)
+            .mode(SaveMode.Append)
             .partitionBy("requestdate", "requesthour")
             .parquet(write_path)
 
