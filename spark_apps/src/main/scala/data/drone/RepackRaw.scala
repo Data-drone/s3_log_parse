@@ -19,14 +19,14 @@ object RepackRaw {
 
     def main(args: Array[String]) {
 
-        //jceks file in cluster config not working yet
-        // manually setting in spark shell works
+        // SaveMode Append is really slow with big data.
+        // generally we are reading folder by folder there will be no duplicates across dates
+        // so we can overwrite 
+        // without the dynamic partition overwrite overwrite will wipe the folder
         val spark = SparkSession
             .builder()
             .appName("RepackApp")
-            .config("spark.executor.cores", "5")
-            .config("spark.num.executors", "20")
-            .config("spark.executor.memory", "11g")
+            .config("spark.sql.sources.partitionOverwriteMode", "dynamic")
             .getOrCreate()
         
         // need to have the slash at the end
@@ -121,10 +121,11 @@ object RepackRaw {
                 .withColumn("requesthour", hour(col("requesttimestamp")))
                 .drop("_tmp")
 
+            // Append mode is really slow in general
             df3.repartition(col("requestdate"))
                 .write
                 .option("maxRecordsPerFile", 2000000)
-                .mode(SaveMode.Append)
+                .mode(SaveMode.Overwrite)
                 .partitionBy("requestdate", "requesthour")
                 .parquet(writeParquet)
 
