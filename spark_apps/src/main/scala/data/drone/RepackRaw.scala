@@ -26,7 +26,7 @@ object RepackRaw {
             .appName("RepackApp")
             .config("spark.executor.cores", "5")
             .config("spark.num.executors", "20")
-            .config("spark.executor.memory", "18g")
+            .config("spark.executor.memory", "11g")
             .getOrCreate()
         
         // need to have the slash at the end
