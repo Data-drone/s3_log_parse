@@ -122,13 +122,12 @@ object RepackRaw {
                 .drop("_tmp")
 
             // Append mode is really slow in general
-            df3.repartition(col("requestdate"))
+            df3.repartition(col("requestdate"), col("requesthour"))
                 .write
                 .option("maxRecordsPerFile", 2000000)
                 .mode(SaveMode.Overwrite)
                 .partitionBy("requestdate", "requesthour")
                 .parquet(writeParquet)
-
     }  
 
 }
