@@ -18,7 +18,7 @@ import org.joda.time.format.DateTimeFormat
 
 object OverwriteModule extends RepackRaw {
 
-    def transform(readText: String, writeParquet: String, spark: SparkSession): Unit = {
+    override def transform(readText: String, writeParquet: String, spark: SparkSession): Unit = {
 
             val df = spark.read.text(readText)
 
