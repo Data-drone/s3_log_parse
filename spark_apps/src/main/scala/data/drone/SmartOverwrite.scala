@@ -5,6 +5,7 @@
 package data.drone
 
 /* Spark app to compress my parquet data down */
+// table hardcoded for now and precreated
 import org.apache.spark.sql.SparkSession
 import java.net.URI
 import org.apache.hadoop.fs.{FileSystem, Path, RemoteIterator, LocatedFileStatus}
@@ -20,7 +21,7 @@ import org.joda.time.format.DateTimeFormat
 
 object SmartOverwrite extends RepackRaw { 
 
-    def transform() {
+    def transform(readText: String, writeParquet: String, spark: SparkSession) {
 
         val df = spark.read.text(readText)
 
