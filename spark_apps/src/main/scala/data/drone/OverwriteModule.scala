@@ -1,6 +1,20 @@
 /*
 *   Splitting out the original overwrite module so that we can reuse the repack code with some adjustments
 */
+package data.drone
+
+/* Spark app to compress my parquet data down */
+import org.apache.spark.sql.SparkSession
+import java.net.URI
+import org.apache.hadoop.fs.{FileSystem, Path, RemoteIterator, LocatedFileStatus}
+import org.apache.hadoop.conf.Configuration
+import scala.collection.mutable.ListBuffer
+import org.apache.spark.sql.functions.{to_timestamp, year, month, dayofmonth, col, hour, to_date, regexp_extract, split}
+import org.apache.spark.sql.types._
+import org.apache.spark.sql.SaveMode
+import org.joda.time.{DateTime, Days}
+import org.joda.time.format.DateTimeFormat
+
 
 object OverwriteModule extends RepackRaw {
 
@@ -61,5 +75,5 @@ object OverwriteModule extends RepackRaw {
                 .partitionBy("requestdate", "requesthour")
                 .parquet(writeParquet)
     }  
-    
+
 }

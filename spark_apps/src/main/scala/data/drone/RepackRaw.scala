@@ -26,7 +26,9 @@ class RepackRaw {
         val spark = SparkSession
             .builder()
             .appName("RepackApp")
+            .enableHiveSupport()
             .config("spark.sql.sources.partitionOverwriteMode", "dynamic")
+            .config("spark.hadoop.hive.exec.dynamic.partition.mode", "nonstrict")
             .getOrCreate()
         
         // need to have the slash at the end
@@ -72,6 +74,7 @@ class RepackRaw {
 
     }
 
+    def transform (): Unit = {}
     
 
 }
