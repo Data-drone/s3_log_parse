@@ -74,7 +74,7 @@ class RepackRaw {
 
     }
 
-    def transform (): Unit = {}
+    def transform (readText: String, writeParquet: String, spark: SparkSession): Unit = {}
     
 
 }
