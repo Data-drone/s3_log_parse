@@ -75,7 +75,7 @@ object SmartOverwrite extends RepackRaw {
         // need to put into a hive table maybe then check if partition exists if it exists append otherwise write
         df3.repartition(col("requestdate"), col("requesthour"))
            .write.mode("append")
-           .insertInto("default.s3_access_logs_parquet_partition_2")
+           .insertInto(writeParquet)
 
     }
 }

@@ -70,7 +70,7 @@ object OverwriteModule extends RepackRaw {
             // Append mode is really slow in general
             df3.repartition(col("requestdate"), col("requesthour"))
                 .write
-                .option("maxRecordsPerFile", 2000000)
+                .option("maxRecordsPerFile", 3000000)
                 .mode(SaveMode.Overwrite)
                 .partitionBy("requestdate", "requesthour")
                 .parquet(writeParquet)
