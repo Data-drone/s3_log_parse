@@ -19,11 +19,11 @@ spark-submit \
     --class data.drone.SmartOverwrite \
     --deploy-mode cluster \
     --master yarn \
-    --driver-cores 5 \
-    --driver-memory 12G \
-    --executor-cores 5 \
-    --executor-memory 12G \
-    --conf spark.driver.maxResultSize=10G \
+    --driver-cores 4 \
+    --driver-memory 10G \
+    --executor-cores 4 \
+    --executor-memory 10G \
+    --conf spark.driver.maxResultSize=9G \
     --conf spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version=2 \
     --conf spark.speculation=false \
     --conf spark.hadoop.hadoop.security.credential.provider.path="jceks://hdfs/user/admin/awskeyfile.jceks" \
@@ -31,9 +31,9 @@ spark-submit \
     --conf spark.shuffle.service.enabled=true \
     target/scala-2.11/test-repack_2.11-1.0-SNAPSHOT.jar \
     "s3a://blaws3logsorganised/datesort/" \
-    "s3a://blaws3logsorganised/dateparquet/test5/" \
-    "2020-06-08" \
-    "2020-06-10"
+    "default.s3_access_logs_parquet_partition_6" \
+    "2020-06-05" \
+    "2020-07-07"
 ```
 
 Need to recheck all these.... boo
