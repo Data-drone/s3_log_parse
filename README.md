@@ -11,6 +11,17 @@ sbt clean package
 
 ```
 
+- Spark Shell
+
+```{bash}
+
+spark-shell \
+    --driver-cores 4 \
+    --driver-memory 10G \
+    --conf spark.hadoop.hadoop.security.credential.provider.path="jceks://hdfs/user/admin/awskeyfile.jceks"
+
+```
+
 - Spark Submit
 
 ```{bash}
@@ -36,14 +47,7 @@ spark-submit \
     "2020-07-07"
 ```
 
-Need to recheck all these.... boo
-"06-09 - 06-09" need to run - done
-"06-12 - 06-12" need to run - done
-"06-13 - 06-15" done
-"06-15 - 06-20" is the next bit - running with hdfs version to test
-
-We are up to the 15th
-Lets maybe kill adjust to write to hdfs then use nifi to copy partitions over?
+2020-07-07 2020-07-20
 
 
 ## ToDo 
