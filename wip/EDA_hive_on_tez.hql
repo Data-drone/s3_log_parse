@@ -49,3 +49,25 @@ instr(key, '/', -1) as `stop_pos`,
 substr(key, 0, instr(key, '/', -1)) as `prefix`
 from logging_demo.s3_access_logs_parquet_partition WHERE requestdate = '2020-06-05';
 
+-- HIVE LLAP
+-- prefixes
+SELECT
+key, length(split(reverse(key),'[/]')[0]),
+--length(key)-length((split(reverse(key),'[/]')[0])
+substr(key, 0, length(key)-length(split(reverse(key),'[/]')[0]) )
+from s3_access_logs_parquet_partition WHERE requestdate = '2020-06-05' LIMIT 10;
+
+-- Likely Hive LLAP create analysis table code
+CREATE EXTERNAL TABLE logging_demo.analysis_s3_logging_by_prefix_second_20200606
+PARTITIONED BY (requestdate)
+STORED AS PARQUET 
+LOCATION 's3a://cdp-sandbox-default-se/user/brian-test/warehouse/analysis' AS
+WITH prefix_table as (
+    SELECT operation, requesthour, key, requestdate, requesttimestamp, turnaroundtime, useragent,
+    substr(key, 0, length(key)-length(split(reverse(key),'[/]')[0]) ) as `prefix`
+    FROM logging_demo.s3_access_logs_parquet_partition WHERE requestdate = '2020-06-06'
+) 
+SELECT requesthour, prefix, operation, useragent, minute(requesttimestamp) as `minute`, 
+second(requesttimestamp) as `seconds`, count(*) as `request_count`, avg(turnaroundtime) as `avg_turnaroundtime`, requestdate FROM prefix_table 
+GROUP BY requestdate, requesthour, prefix, operation, useragent, minute(requesttimestamp), second(requesttimestamp);
+

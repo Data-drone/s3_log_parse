@@ -46,17 +46,17 @@ SELECT requesthour, prefix, operation, minute(requesttimestamp), second(requestt
 GROUP BY requesthour, prefix, operation, minute(requesttimestamp), second(requesttimestamp);
 
 -- adding the user agent:
-CREATE TABLE logging_demo.analysis_s3_logging_by_prefix_second
-PARTITIONED BY (requestdate STRING)
+CREATE EXTERNAL TABLE logging_demo.analysis_s3_logging_by_prefix_second
+PARTITIONED BY requestdate
 STORED AS PARQUET 
-LOCATION 's3a://cdp-sandbox-default-se/user/brian-test/warehouse/analysis' AS
+LOCATION 's3a://cdp-sandbox-default-se/user/brian-test/warehouse/impala_analysis' AS
 WITH 'prefix_table' as (
     SELECT operation, requesthour, key, requestdate, requesttimestamp, turnaroundtime, useragent,
     STRLEFT(key, instr(key, '/', -1)) as 'prefix'
     FROM logging_demo.s3_access_logs_parquet_partition
 ) 
-SELECT requestdate, requesthour, prefix, operation, useragent, minute(requesttimestamp) as 'minute', 
-second(requesttimestamp) as 'seconds', count(*) as 'request_count', avg(turnaroundtime) as 'avg_turnaroundtime' FROM prefix_table 
+SELECT requesthour, prefix, operation, useragent, minute(requesttimestamp) as 'minute', 
+second(requesttimestamp) as 'seconds', count(*) as 'request_count', avg(turnaroundtime) as 'avg_turnaroundtime', requestdate FROM prefix_table 
 GROUP BY requestdate, requesthour, prefix, operation, useragent, minute(requesttimestamp), second(requesttimestamp);
 
 compute stats logging_demo.s3_access_logs_parquet_partition;
