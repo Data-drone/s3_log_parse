@@ -37,6 +37,8 @@ LOCATION 's3a://blaws3logsorganised/dateparquet/test6/';
 
 
 -- create a table to look at prefix behaviour
+-- this blows up the cache in impala
+-- nbeed hive
 CREATE EXTERNAL TABLE logging_demo.analysis_s3_logging_by_prefix_second
 PARTITIONED BY requestdate
 STORED AS PARQUET 
@@ -49,3 +51,11 @@ WITH 'prefix_table' as (
 SELECT requesthour, prefix, operation, useragent, minute(requesttimestamp) as 'minute', 
 second(requesttimestamp) as 'seconds', count(*) as 'request_count', avg(turnaroundtime) as 'avg_turnaroundtime', requestdate FROM prefix_table 
 GROUP BY requestdate, requesthour, prefix, operation, useragent, minute(requesttimestamp), second(requesttimestamp);
+
+-- examining HTTP Code Trends
+CREATE EXTERNAL TABLE IF NOT EXISTS logging_demo.analysis_http_codes_per_hour
+PARTITIONED BY (requestdate)
+STORED AS PARQUET 
+LOCATION 's3a://cdp-sandbox-default-se/user/brian-test/warehouse/analysis_http_codes_per_hour' AS
+SELECT requesthour, useragent, httpstatus, count(*), requestdate FROM s3_access_logs_parquet_partition
+GROUP BY requestdate, requesthour, useragent, httpstatus;

@@ -22,3 +22,9 @@ LOCATION 's3a://cdp-sandbox-default-se/user/brian-test/warehouse/analysis_s3_log
 
 -- reload partitions
 ALTER TABLE logging_demo.analysis_s3_logging_by_prefix_second RECOVER PARTITIONS;
+
+-- this is stored in the hive metastore so will need to be rerun
+-- may take a while?
+COMPUTE STATS logging_demo.s3_access_logs_parquet_partition;
+COMPUTE STATS logging_demo.analysis_s3_logging_by_prefix_second;
+

@@ -1,21 +1,9 @@
--- create table
-
-CREATE EXTERNAL TABLE IF NOT EXISTS logging_demo.s3_access_logs_parquet_partition 
-LIKE PARQUET 's3a://cdp-sandbox-default-se/user/brian-test/warehouse/logs/requestdate=2020-06-08/requesthour=12/part-00068-bf8a38cf-2d5e-413c-8a9b-0a4b8bd8988f.c000'
-PARTITIONED BY (RequestDate STRING, RequestHour INT)
-STORED AS PARQUET
-LOCATION 's3a://cdp-sandbox-default-se/user/brian-test/warehouse/logs/';
-
--- reload partitions
-ALTER TABLE logging_demo.s3_access_logs_parquet_partition RECOVER PARTITIONS;
-
+-- impala sql
 -- check data
 
 SELECT * FROM logging_demo.s3_access_logs_parquet_partition LIMIT 10;
 
 -- string split into sub database thingies
-
-
 
 SELECT key, 
 split_part(key, '/', 1) as 'db_system',
@@ -35,31 +23,6 @@ SELECT operation, requesthour, key, requestdate,
     STRLEFT(key, instr(key, '/', -1)) as 'prefix'
     FROM logging_demo.s3_access_logs_parquet_partition;
 
-
-WITH 'prefix_table' as (
-    SELECT operation, requesthour, key, requestdate, requesttimestamp,
-    STRLEFT(key, instr(key, '/', -1)) as 'prefix'
-    FROM logging_demo.s3_access_logs_parquet_partition
-    WHERE requestdate = '2020-06-05'
-) 
-SELECT requesthour, prefix, operation, minute(requesttimestamp), second(requesttimestamp), count(*), avg(turnaroundtime) FROM prefix_table 
-GROUP BY requesthour, prefix, operation, minute(requesttimestamp), second(requesttimestamp);
-
--- adding the user agent:
-CREATE EXTERNAL TABLE logging_demo.analysis_s3_logging_by_prefix_second
-PARTITIONED BY requestdate
-STORED AS PARQUET 
-LOCATION 's3a://cdp-sandbox-default-se/user/brian-test/warehouse/impala_analysis' AS
-WITH 'prefix_table' as (
-    SELECT operation, requesthour, key, requestdate, requesttimestamp, turnaroundtime, useragent,
-    STRLEFT(key, instr(key, '/', -1)) as 'prefix'
-    FROM logging_demo.s3_access_logs_parquet_partition
-) 
-SELECT requesthour, prefix, operation, useragent, minute(requesttimestamp) as 'minute', 
-second(requesttimestamp) as 'seconds', count(*) as 'request_count', avg(turnaroundtime) as 'avg_turnaroundtime', requestdate FROM prefix_table 
-GROUP BY requestdate, requesthour, prefix, operation, useragent, minute(requesttimestamp), second(requesttimestamp);
-
-compute stats logging_demo.s3_access_logs_parquet_partition;
 
 -- lets look for bottlenecking
 -- prefix analysis
@@ -111,3 +74,10 @@ FROM logging_demo.s3_access_logs_parquet_partition
 WHERE useragent = '"snowflake/1.0"' AND requestdate in ('2020-06-15', '2020-06-18', '2020-06-25', '2020-07-01', '2020-07-15')
 GROUP BY requestdate, requesthour
 ORDER BY requestdate, requesthour;
+
+
+-- Exploring the Request ID
+-- 79F16D767C296F74 on the 2020-07-01
+
+SELECT requestid, requestdatetime, key, objectsize, useragent, referrer FROM logging_demo.s3_access_logs_parquet_partition
+WHERE requestid = '79F16D767C296F74';
