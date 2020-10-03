@@ -52,10 +52,12 @@ SELECT requesthour, prefix, operation, useragent, minute(requesttimestamp) as 'm
 second(requesttimestamp) as 'seconds', count(*) as 'request_count', avg(turnaroundtime) as 'avg_turnaroundtime', requestdate FROM prefix_table 
 GROUP BY requestdate, requesthour, prefix, operation, useragent, minute(requesttimestamp), second(requesttimestamp);
 
+
 -- examining HTTP Code Trends
+
 CREATE EXTERNAL TABLE IF NOT EXISTS logging_demo.analysis_http_codes_per_hour
 PARTITIONED BY (requestdate)
 STORED AS PARQUET 
 LOCATION 's3a://cdp-sandbox-default-se/user/brian-test/warehouse/analysis_http_codes_per_hour' AS
-SELECT requesthour, useragent, httpstatus, count(*), requestdate FROM s3_access_logs_parquet_partition
-GROUP BY requestdate, requesthour, useragent, httpstatus;
+SELECT requesttimestamp, useragent, httpstatus, count(*), requestdate FROM s3_access_logs_parquet_partition
+GROUP BY requestdate, requesttimestamp, useragent, httpstatus;
