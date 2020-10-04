@@ -40,9 +40,9 @@ LOCATION 's3a://blaws3logsorganised/dateparquet/test6/';
 -- this blows up the cache in impala
 -- nbeed hive
 CREATE EXTERNAL TABLE logging_demo.analysis_s3_logging_by_prefix_second
-PARTITIONED BY requestdate
+PARTITIONED BY (requestdate)
 STORED AS PARQUET 
-LOCATION 's3a://cdp-sandbox-default-se/user/brian-test/warehouse/impala_analysis' AS
+LOCATION 's3a://cdp-sandbox-default-se/user/brian-test/warehouse/analysis_s3_logging_by_prefix_second' AS
 WITH 'prefix_table' as (
     SELECT operation, requesthour, key, requestdate, requesttimestamp, turnaroundtime, useragent,
     STRLEFT(key, instr(key, '/', -1)) as 'prefix'
@@ -59,5 +59,5 @@ CREATE EXTERNAL TABLE IF NOT EXISTS logging_demo.analysis_http_codes_per_hour
 PARTITIONED BY (requestdate)
 STORED AS PARQUET 
 LOCATION 's3a://cdp-sandbox-default-se/user/brian-test/warehouse/analysis_http_codes_per_hour' AS
-SELECT requesttimestamp, useragent, httpstatus, count(*), requestdate FROM s3_access_logs_parquet_partition
+SELECT requesttimestamp, useragent, httpstatus, count(*) as 'event_count', requestdate FROM s3_access_logs_parquet_partition
 GROUP BY requestdate, requesttimestamp, useragent, httpstatus;
