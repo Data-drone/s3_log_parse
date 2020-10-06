@@ -3,37 +3,37 @@
 -- just copied over from hive script at the moment
 
 CREATE EXTERNAL TABLE IF NOT EXISTS logging_demo.s3_access_logs_parquet_partition(
-    BucketOwner STRING,
-    Bucket STRING,
-    RequestDateTime STRING,
-    RemoteIP STRING,
-    Requester STRING,
-    RequestID STRING,
-    Operation STRING,
-    Key STRING,
-    Request STRING,
-    HTTPstatus STRING,
-    ErrorCode STRING,
-    BytesSent INT,
-    ObjectSize INT,
-    TotalTime INT,
-    TurnAroundTime INT,
-    Referrer STRING,
-    UserAgent STRING,
-    VersionId STRING,
-    HostId STRING,
-    SigV STRING,
-    CipherSuite STRING,
-    AuthType STRING,
-    EndPoint STRING,
-    TLSVersion STRING,
-    RequestURI_operation STRING,
-    RequestURI_key STRING,
-    RequestURI_httpProtoversion STRING,
-    RequestTimestamp TIMESTAMP
-) PARTITIONED BY (RequestDate STRING, RequestHour STRING )
+    bucketowner STRING,
+    bucket STRING,
+    requestdatetime STRING,
+    remoteip STRING,
+    requester STRING,
+    requestid STRING,
+    operation STRING,
+    key STRING,
+    request STRING,
+    httpstatus STRING,
+    errorcode STRING,
+    bytessent INT,
+    objectsize INT,
+    totaltime INT,
+    turnaroundtime INT,
+    referrer STRING,
+    useragent STRING,
+    versionid STRING,
+    hostid STRING,
+    sigv STRING,
+    ciphersuite STRING,
+    authtype STRING,
+    endpoint STRING,
+    tlsversion STRING,
+    requesturi_operation STRING,
+    requesturi_key STRING,
+    requesturi_httpprotoversion STRING,
+    requesttimestamp TIMESTAMP
+) PARTITIONED BY (requestdate STRING, requesthour STRING )
 STORED AS PARQUET
-LOCATION 's3a://blaws3logsorganised/dateparquet/test6/';
+LOCATION 's3a://blaws3logsorganised/dateparquet/fix1/';
 
 
 -- create a table to look at prefix behaviour
