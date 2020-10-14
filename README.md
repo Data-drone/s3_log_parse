@@ -78,24 +78,27 @@ SmartOverwrite appends to an existing table so need to make sure that the table 
 
 
 ```{bash}
+--conf spark.hadoop.hadoop.security.credential.provider.path="jceks://hdfs/user/cm_admin/awskeyfile.jceks" \
+    
+    --principal cm_admin \
+    --keytab cm_admin.keytab \
 
 spark-submit \
     --class data.drone.SmartOverwrite \
     --deploy-mode cluster \
     --master yarn \
-    --driver-cores 4 \
-    --driver-memory 8G \
-    --executor-cores 4 \
-    --executor-memory 8G \
-    --conf spark.driver.maxResultSize=8G \
+    --driver-cores 6 \
+    --driver-memory 16G \
+    --executor-cores 6 \
+    --executor-memory 16G \
+    --conf spark.driver.maxResultSize=16G \
     --conf spark.hadoop.mapreduce.fileoutputcommitter.algorithm.version=2 \
     --conf spark.speculation=false \
-    --conf spark.hadoop.hadoop.security.credential.provider.path="jceks://hdfs/user/cm_admin/awskeyfile.jceks" \
     --conf spark.dynamicAllocation.enabled=true \
     --conf spark.shuffle.service.enabled=true \
     target/scala-2.11/test-repack_2.11-1.0-SNAPSHOT.jar \
     "s3a://blaws3logsorganised/datesort/" \
-    "default." \
+    "default.s3_access_logs_parquet_partition" \
     "2020-07-01" \
     "2020-07-08"
 ```

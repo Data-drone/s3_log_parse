@@ -18,3 +18,28 @@ df2.createOrReplaceTempView("logs")
 // then do the splits
 // cache then take 10
 spark.sql("SELECT path_split, system, zone, database from logs LIMIT 10").show()
+
+// checking different folders for min max dates to make sure that we get everything converted properly
+
+val file_to_check="s3a://blaws3logsorganised/datesort/20-07-06/*"
+val df = spark.read.text(file_to_check)
+import spark.implicits._
+val regex_pattern = "^([^\\s]+) ([^\\s]+) \\[(.*?)\\] ([^\\s]+) ([^\\s]+) ([^\\s]+) ([^\\s]+) ([^\\s]+) (\".*?\"|-) (-|[0-9]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) (\".*?\"|-) (\".*?\"|-|[^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^ ]*) ([^\\s]+|-,)"
+
+import org.apache.spark.sql.functions._
+
+df3.select(min("requesttimestamp"), max("requesttimestamp")).show()
+
+df3.select("requestdate", "requesthour")
+
+df3.repartition(col("requestdate"), col("requesthour"))
+           .write.mode("append")
+           .insertInto("default.s3_access_logs_parquet_partition")
+
+// test etl
+// extracting bucket stuff
+
+val testDF = df3
+            .withColumn("_tmp", split($"key", "/"))
+            .withColumn("object", $"_tmp".getItem(-1))
+        
