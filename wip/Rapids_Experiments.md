@@ -57,10 +57,10 @@ spark3-shell \
   --master yarn \
   --deploy-mode client \
   --driver-cores 6 \
-  --driver-memory 6G \
-  --executor-cores 6 \
-  --conf spark.executor.memory=8G \
-  --conf spark.rapids.sql.concurrentGpuTasks=2 \
+  --driver-memory 15G \
+  --executor-cores 8 \
+  --conf spark.executor.memory=15G \
+  --conf spark.rapids.sql.concurrentGpuTasks=4 \
   --conf spark.executor.resource.gpu.amount=1 \
   --conf spark.rapids.sql.enabled=true \
   --conf spark.rapids.sql.explain=ALL \
@@ -91,5 +91,10 @@ But is detrimental to full system
   
 Increases parallelism too high will blow up GPU mem
 Recommendation is 2 - tune by job
+spark.conf.get("spark.rapids.sql.concurrentGpuTasks")
+
+spark.conf.set("spark.rapids.sql.concurrentGpuTasks", "4")
 --conf spark.rapids.sql.concurrentGpuTasks=2 \
 
+spark.conf.set("spark.rapids.sql.castFloatToString.enabled", "true")
+--conf spark.rapids.sql.castFloatToString.enabled true
