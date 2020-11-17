@@ -46,9 +46,10 @@ val testDF = df3
 
 // rapids testing
 // rapids doesn't support flat textformat / timestamp / regex
-
+// /opt/rapids/getGpusResources.sh
 // checkout 1 day
-val check_dirs="s3a://blaws3logsorganised/dateparquet/test6/requestdate=2020-06-19/*"
+//val check_dirs="s3a://blaws3logsorganised/dateparquet/test6/requestdate=2020-06-19/*"
+val check_dirs="s3a://blaw-files/s3logs_parquet/datalake/raws3logs_fix1/requestdate=2020-07-01/requesthour=11/part-00047-19bbf8cd-9844-4595-a9ef-805c19920a16-application_1602251761531_0003.c000"
 val df = spark.read.parquet(check_dirs)
 
 val df2 = df
