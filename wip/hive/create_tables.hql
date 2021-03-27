@@ -33,7 +33,8 @@ CREATE EXTERNAL TABLE IF NOT EXISTS logging_demo.s3_access_logs_parquet_partitio
     RequestTimestamp TIMESTAMP
 ) PARTITIONED BY (RequestDate STRING, RequestHour STRING )
 STORED AS PARQUET
-LOCATION 's3a://blaws3logsorganised/dateparquet/test6/';
+LOCATION 's3a://blaw-files/s3logs_parquet/datalake/raws3logs/';
+-- old location: s3a://blaws3logsorganised/dateparquet/test6/
 
 -- regenerate the partitions
 MSCK REPAIR TABLE logging_demo.s3_access_logs_parquet_partition;

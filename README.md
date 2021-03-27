@@ -110,3 +110,5 @@ spark-submit \
 
 Add code to read the groks direct and explore them
 
+Explore most popular tables
+Look at fragmentation in tables (small files)
