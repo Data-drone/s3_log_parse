@@ -112,3 +112,5 @@ Add code to read the groks direct and explore them
 
 Explore most popular tables
 Look at fragmentation in tables (small files)
+Look at modelling the data for turnaround time?
+- Need to look into features and how to encode these
