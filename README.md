@@ -114,8 +114,9 @@ Explore most popular tables
 - Need to use external tables to avoid Hive ACID defaults in CDP
 - Spark doesn't talk right to s3 via IDBroker right now
 
-Look at fragmentation in tables (small files)
-
+Look at fragmentation in tables (small files) via prefixes 
 
 Look at modelling the data for turnaround time?
 - Need to look into features and how to encode these
+
+Look at modelling the traffic patterns in general at database level?
