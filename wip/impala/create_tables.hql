@@ -33,7 +33,10 @@ CREATE EXTERNAL TABLE IF NOT EXISTS logging_demo.s3_access_logs_parquet_partitio
     requesttimestamp TIMESTAMP
 ) PARTITIONED BY (requestdate STRING, requesthour STRING )
 STORED AS PARQUET
-LOCATION 's3a://blaws3logsorganised/dateparquet/fix1/';
+LOCATION 's3a://blaw-files/s3logs_parquet/datalake/raws3logs/';
+-- 's3a://blaws3logsorganised/dateparquet/fix1/'
+
+-- update partitions
 
 
 -- create a table to look at prefix behaviour
@@ -61,3 +64,11 @@ STORED AS PARQUET
 LOCATION 's3a://cdp-sandbox-default-se/user/brian-test/warehouse/analysis_http_codes_per_hour' AS
 SELECT requesttimestamp, useragent, httpstatus, count(*) as 'event_count', requestdate FROM s3_access_logs_parquet_partition
 GROUP BY requestdate, requesttimestamp, useragent, httpstatus;
+
+-- examine the prefix keys and when they were first and last seen
+-- for spark analysis
+CREATE EXTERNAL TABLE IF NOT EXISTS logging_demo.key_table
+AS SELECT `key`, min(requestdatetime) as first_seen,
+max(requestdatetime) as last_seen
+FROM logging_demo.s3_access_logs_parquet_partition
+

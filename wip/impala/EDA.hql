@@ -81,3 +81,12 @@ ORDER BY requestdate, requesthour;
 
 SELECT requestid, requestdatetime, key, objectsize, useragent, referrer FROM logging_demo.s3_access_logs_parquet_partition
 WHERE requestid = '79F16D767C296F74';
+
+
+-- Look at the total turnaround time
+-- Lets bin into histograms:
+
+SELECT key, width_bucket(turnaroundtime, min(turnaroundtime), max(turnaroundtime), 10)
+FROM logging_demo.s3_access_logs_parquet_partition
+GROUP BY `key`
+
