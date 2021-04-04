@@ -82,11 +82,11 @@ ORDER BY requestdate, requesthour;
 SELECT requestid, requestdatetime, key, objectsize, useragent, referrer FROM logging_demo.s3_access_logs_parquet_partition
 WHERE requestid = '79F16D767C296F74';
 
-
--- Look at the total turnaround time
--- Lets bin into histograms:
-
-SELECT key, width_bucket(turnaroundtime, min(turnaroundtime), max(turnaroundtime), 10)
+-- explore the prefixes and the dependencies
+CREATE TABLE logging_demo.key_table
+AS SELECT key, min(requestdatetime), max(requestdatetime)
 FROM logging_demo.s3_access_logs_parquet_partition
-GROUP BY `key`
+GROUP BY key
 
+-- we will have to explore key depths in spark so that we can look at the key splits etc
+-- explore the key depths

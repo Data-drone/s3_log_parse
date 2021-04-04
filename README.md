@@ -120,3 +120,9 @@ Look at modelling the data for turnaround time?
 - Need to look into features and how to encode these
 
 Look at modelling the traffic patterns in general at database level?
+
+Explore Spark Anomaly Detection:
+- https://github.com/Fokko/spark-stochastic-outlier-selection
+-   Though this is in order of quadratic time
+
+For different prefixes there are different hierarchies need to find a way to distinguish.
