@@ -2,8 +2,8 @@ from __future__ import print_function
 import os
 import sys
 from pyspark.sql import SparkSession
-from pyspark.sql.types import Row, StructField, StructType, StringType, IntegerType
-from pyspark.sql.functions import col, split    
+from pyspark.sql.types import Row, StructField, StructType, StringType, IntegerType, ArrayType
+from pyspark.sql.functions import col, split, udf, size, element_at
 
 ### Goal is to parse through the s3 prefixes 
 ### and get a data structure that can be used for visualisations and also analysis
@@ -29,13 +29,30 @@ spark = SparkSession \
 ## We assume that the hive table already exists from the raw logs
 key_data = spark.sql("SELECT `key` FROM logging_demp.key_table")
 
+## Create some the parent child pairs we need to create out structure
+def zip_pairs(value):
+  lead_list = value.copy()
+  lead_list.pop()
+  lead_list.insert(0,None)
+  result = [item for item in zip(lead_list,value)]
+  
+  return result
+
+pairZip = udf(zip_pairs, ArrayType(ArrayType(StringType())) )
+
+df2 = key_data.select("key").withColumn("key_split", split(col("key"), "/")) \
+        .withColumn("depth", size(col("key_split"))) \
+        .withColumn("file", element_at(col("key_split"), -1) ) \
+        .withColumn("pairs", pairZip(col("key_split")))
+
 ## Schema to create.
 ## prefixes all refer to a file.
 ## a file is the list thing in the prefix (-1 index in the python list once we split)
 ## All other bits are parents.
 ## two types
 
-## "Folder" / File
+## "Folder" / File / "table" which is group of files
+## tables can have partitions too which maybe important
 ## Note Folder doesn't matter for perf testing but is used for permission models and end user exploration
 
 ## Folder has parent attribute
