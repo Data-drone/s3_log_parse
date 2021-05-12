@@ -5,6 +5,13 @@ Test scripts to parse S3 Access Logs
 Installing sbt on edge-node
 https://linuxadminonline.com/how-to-install-sbt-on-centos-7/
 
+# Local Test stack
+
+```{bash}
+
+docker-compose -f docker-compose/docker-compose.yml up --scale spark-worker=4
+
+```
 
 # Authentication on Clusters
 
