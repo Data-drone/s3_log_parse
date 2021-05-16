@@ -115,12 +115,6 @@ spark-submit \
 
 ## ToDo 
 
-Add code to read the groks direct and explore them
-
-Explore most popular tables
-- Need to use external tables to avoid Hive ACID defaults in CDP
-- Spark doesn't talk right to s3 via IDBroker right now
-
 Look at fragmentation in tables (small files) via prefixes 
 
 Look at modelling the data for turnaround time?
