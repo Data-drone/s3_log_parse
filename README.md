@@ -7,11 +7,20 @@ https://linuxadminonline.com/how-to-install-sbt-on-centos-7/
 
 # Local Test stack
 
-```{bash}
+Starts up a local test stack using docker
 
+```{bash}
+# CPU based spark
 docker-compose -f docker-compose/docker-compose.yml up --scale spark-worker=4
 
 ```
+
+```{bash}
+# Testin GPU based spark
+docker-compose -f docker-compose/docker-compose-gpu.yml up
+
+```
+
 
 # Authentication on Clusters
 
